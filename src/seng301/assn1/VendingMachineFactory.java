@@ -492,6 +492,11 @@ import org.lsmr.vending.frontend1.parser.ParseException;
  * CHECK_TEARDOWN(1; 100)
  * </pre>
  */
+
+// A SMALLE COMMENT TO TEST IF THE GITHUB IS WORKING 
+// WHY AINT THIS WORKING MAN
+
+
 public class VendingMachineFactory implements IVendingMachineFactory {
     /**
      * This is the method that is called to run your program.
