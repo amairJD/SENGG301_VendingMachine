@@ -498,6 +498,7 @@ import org.lsmr.vending.frontend1.parser.ParseException;
 
 // A SMALLE COMMENT TO TEST IF THE GITHUB IS WORKING 
 // WHY AINT THIS WORKING MAN
+// PUSH TEST FROM HOME
 
 
 public class VendingMachineFactory implements IVendingMachineFactory {
