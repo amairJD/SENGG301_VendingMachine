@@ -22,23 +22,22 @@ public class VendingMachine {
 	VendingMachine(List<Integer> in_coinKinds, int selectionButtonCount, int indexCounter){
 		selectButtons = new ArrayList<Pop>(selectionButtonCount);
 		coinKinds = in_coinKinds;
+		treasury = 0;
+		change = 0;
 		index = indexCounter;
 	}
 
 
 	public void configurePops(List<String> popNames, List<Integer> popCosts) {
-		
 		selectButtons.clear();
 		
 		Iterator<String> popNames_Iterator = popNames.iterator();
 		Iterator<Integer> popCosts_Iterator = popCosts.iterator();		
-		
 		while (popNames_Iterator.hasNext() && popCosts_Iterator.hasNext()) {
 			selectButtons.add(new Pop(popNames_Iterator.next(), popCosts_Iterator.next()));
 		}
 		
 	}
-
 
 	public void setIndex(int vmIndex) {
 		index = vmIndex;
@@ -46,6 +45,10 @@ public class VendingMachine {
 	
 	public int getIndex(){
 		return index;
+	}
+	
+	public void depositCoins(int coins){
+		
 	}
 	
 	

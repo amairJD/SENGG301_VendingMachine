@@ -573,8 +573,13 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 
     @Override
     public void loadCoins(int vmIndex, int coinKindIndex, Coin... coins) {
-	// TODO Replace this with a real implementation
-    }
+    	VendingMachine vm = findVM(vmIndex);
+    	if (vm != null){
+    		//vm.depositCoins(coins.getValue());
+    	}
+    	
+    	// TODO Replace this with a real implementation
+    } 
 
     @Override
     public void loadPops(int vmIndex, int popKindIndex, Pop... pops) {
@@ -589,10 +594,18 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     
     // When a Vending Machine needs to be destroyed, use this instead of ArrayList<E>.remove()!
     public void destroyVM(int vmIndex){
+    	VendingMachine vm = findVM(vmIndex);
+    	vm = null;
+    }
+    
+    // index's may get rearranged if some vending machines are removed, so use this to find the right machine
+    public VendingMachine findVM(int vmIndex) {
     	for (VendingMachine vm: vmList){
     		if (vm.getIndex() == vmIndex){
-    			vm = null;
+    			return vm;
     		}
-    	}    
+    	}
+		return null;  
     }
+    
 }
