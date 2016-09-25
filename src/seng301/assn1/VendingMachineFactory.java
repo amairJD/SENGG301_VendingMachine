@@ -502,6 +502,14 @@ import org.lsmr.vending.frontend1.parser.ParseException;
 
 
 public class VendingMachineFactory implements IVendingMachineFactory {
+	
+	// The ArrayList keeps track of each Vending Machine created, numbered sequentially from 0
+	// NOTE: If you need to get rid of a Vending Machine, do not use vmList.remove(vmIndex). 
+	// 		Use this.destroyVM(vmIndex) instead! (Need to set to null so order of indexes is maintained).
+	private ArrayList<VendingMachine> vmList;
+	
+	private int indexCounter;
+	
     /**
      * This is the method that is called to run your program.
      * 
@@ -519,6 +527,7 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 	// replaced or modified as you see fit, but this method must create one
 	// or more instances of {@link ScriptProcessor}.
 
+    	
 	// Note that the scripts should be processed INDEPENDENTLY, which means
 	// that a new factory is needed to process each script.
 	new ScriptProcessor("good-script", new VendingMachineFactory(), true);
@@ -530,7 +539,8 @@ public class VendingMachineFactory implements IVendingMachineFactory {
      * Basic constructor.
      */
     public VendingMachineFactory() {
-	// TODO Replace this with a real implementation
+    	vmList = new ArrayList<VendingMachine>();
+    	indexCounter = 0;
     }
 
     @Override
@@ -551,13 +561,14 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 
     @Override
     public int constructNewVendingMachine(List<Integer> coinKinds, int selectionButtonCount) {
-	// TODO Replace this with a real implementation
-	return -1;
+    	vmList.add(new VendingMachine(coinKinds, selectionButtonCount, indexCounter));
+    	indexCounter++;
+    	return -1;
     }
 
     @Override
     public void configureVendingMachine(int vmIndex, List<String> popNames, List<Integer> popCosts) {
-	// TODO Replace this with a real implementation
+    	vmList.get(vmIndex).configurePops(popNames, popCosts);
     }
 
     @Override
@@ -574,5 +585,14 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     public List<List<?>> unloadVendingMachine(int vmIndex) {
 	// TODO Replace this with a real implementation
 	return Arrays.<List<?>> asList(new ArrayList<Object>(new Integer(0)), new ArrayList<Object>(new Integer(0)), new ArrayList<Object>());
+    }
+    
+    // When a Vending Machine needs to be destroyed, use this instead of ArrayList<E>.remove()!
+    public void destroyVM(int vmIndex){
+    	for (VendingMachine vm: vmList){
+    		if (vm.getIndex() == vmIndex){
+    			vm = null;
+    		}
+    	}    
     }
 }
