@@ -570,20 +570,29 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     public void configureVendingMachine(int vmIndex, List<String> popNames, List<Integer> popCosts) {
     	vmList.get(vmIndex).configurePops(popNames, popCosts);
     }
+    
+    
+    
+    // WTF DOES IT MEAN BY COINKINDINDEX
 
     @Override
     public void loadCoins(int vmIndex, int coinKindIndex, Coin... coins) {
     	VendingMachine vm = findVM(vmIndex);
     	if (vm != null){
-    		//vm.depositCoins(coins.getValue());
+    		for (Coin coin: coins){
+    			vm.depositCoin(coinKindIndex, coin);
+    		}
     	}
-    	
-    	// TODO Replace this with a real implementation
     } 
 
     @Override
     public void loadPops(int vmIndex, int popKindIndex, Pop... pops) {
-	// TODO Replace this with a real implementation
+    	VendingMachine vm = findVM(vmIndex);
+    	if (vm != null){
+    		for (Pop pop: pops){
+    			vm.depositPop(pop);
+    		}
+    	}
     }
 
     @Override
