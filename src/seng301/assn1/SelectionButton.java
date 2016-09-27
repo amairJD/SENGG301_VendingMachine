@@ -28,4 +28,8 @@ public class SelectionButton {
 		return selIndex;
 	}
 
+	public Integer getPrice() {
+		return price;
+	}
+
 }

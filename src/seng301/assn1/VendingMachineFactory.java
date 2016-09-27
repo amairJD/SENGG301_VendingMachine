@@ -545,8 +545,10 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 
     @Override
     public List<Deliverable> extractFromDeliveryChute(int vmIndex) {
-	// TODO Replace this with a real implementation
-	return Collections.emptyList();
+    	VendingMachine vm = findVM(vmIndex);
+    	if (vm != null){
+    		return vm.emptyDeliveryChute();
+    	} else return null;
     }
 
     @Override
@@ -561,7 +563,7 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     public void pressButton(int vmIndex, int value) {
     	VendingMachine vm = findVM(vmIndex);
     	if (vm != null){
-    		
+    		vm.pressButton(value);
     	}
     }
 
@@ -583,7 +585,7 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     	VendingMachine vm = findVM(vmIndex);
     	if (vm != null){
     		for (Coin coin: coins){
-    			vm.insertCoin_Treasury(coinKindIndex, coin);
+    			vm.loadCoin_Treasury(coinKindIndex, coin);
     		}
     	}
     } 
@@ -599,7 +601,12 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     @Override
     public List<List<?>> unloadVendingMachine(int vmIndex) {
 	// TODO Replace this with a real implementation
-	return Arrays.<List<?>> asList(new ArrayList<Object>(new Integer(0)), new ArrayList<Object>(new Integer(0)), new ArrayList<Object>());
+	//return Arrays.<List<?>> asList(new ArrayList<Object>(new Integer(0)), new ArrayList<Object>(new Integer(0)), new ArrayList<Object>());
+    	VendingMachine vm = findVM(vmIndex);
+    	if (vm != null){
+    		return vm.unload();
+    	} else
+    		return null;    	
     }
     
     // When a Vending Machine needs to be destroyed, use this instead of ArrayList<E>.remove()!
