@@ -1,6 +1,7 @@
 package seng301.assn1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -8,43 +9,55 @@ import java.util.Map;
 import org.lsmr.vending.frontend1.Coin;
 import org.lsmr.vending.frontend1.Pop;
 
-public class VendingMachine {
-	private ArrayList<Better_Pop>  selectButtons; 
+public class VendingMachine {	
 	
-	// Total cash is kept in the 'treasury'. Represented as (K, V), where each key is the coin kind, 
-	// and it's value is the number of those coins. I.e, (5, 3) means that there are 3 nickels
-	private Map<Integer, Integer> treasury; 
+	private Map<SelectionButton, ArrayList<Pop>> buttonGrid;
+	// Each selection button stores an index and price, and corresponds with a number/type of pops
 	
-	private Integer change; // Store temporary change here that may be returned
+	private Map<Integer, ArrayList<Coin>> treasury;
+	// Total cash is kept in the 'treasury'. Represented as (K, V), where each (K)ey is the coin kind, 
+	// and it's (V)alue is a List containing the coins.
+	
+	private ArrayList<Coin> changeBucket;
+	// Change is stored here temporarily and stays unless a purchase is made
+
 	private int index;
 
-	// Default Constructor, DO NOT use!
-	// Use second constructor and pass in ID from Factory
-	VendingMachine(){
-	
-	};
-	
-	
 	// Pass in ID from Factory to this constructor
 	VendingMachine(List<Integer> in_coinKinds, int selectionButtonCount, int indexCounter){
-		selectButtons = new ArrayList<Better_Pop>(selectionButtonCount);		
-		for (int coinKind: in_coinKinds){
-			treasury.put(coinKind, 0);
+		
+		buttonGrid = new HashMap<SelectionButton, ArrayList<Pop> >();
+		for(int i = 0; i < selectionButtonCount; i++){
+			buttonGrid.put(new SelectionButton(i, 0), new ArrayList<Pop>());
 		}
-		change = 0;
+		
+		treasury = new HashMap<Integer, ArrayList<Coin> >();
+		for (int coinKind: in_coinKinds){
+			treasury.put(coinKind, new ArrayList<Coin>());
+		}
+		
+		changeBucket = new ArrayList<Coin>();
 		index = indexCounter;
 	}
-
+	
+	// Basic Constructor, DO NOT use!
+	VendingMachine(){
+		
+	};
 
 	public void configurePops(List<String> popNames, List<Integer> popCosts) {
-		selectButtons.clear();
+		buttonGrid.clear();
 		
-		Iterator<String> popNames_Iterator = popNames.iterator();
-		Iterator<Integer> popCosts_Iterator = popCosts.iterator();		
-		while (popNames_Iterator.hasNext() && popCosts_Iterator.hasNext()) {
-			selectButtons.add(new Better_Pop(popNames_Iterator.next(), popCosts_Iterator.next()));
-		}
-		
+		if(popNames.size() <= buttonGrid.size() && popCosts.size() <= buttonGrid.size()){
+			Iterator<String> popNames_Iterator = popNames.iterator();
+			Iterator<Integer> popCosts_Iterator = popCosts.iterator();		
+			while (popNames_Iterator.hasNext() && popCosts_Iterator.hasNext()) {
+				for (SelectionButton selButton: buttonGrid.keySet()){
+					selButton.setStoredPopName(popNames_Iterator.next());
+					selButton.setPrice(popCosts_Iterator.next());
+				}
+			}
+		}		
 	}
 
 	public void setIndex(int vmIndex) {
@@ -55,17 +68,25 @@ public class VendingMachine {
 		return index;
 	}
 	
+	public void insertCoin_Purchase(Coin coin){
+		changeBucket.add(coin);
+	}
 	
-	// >?????
-	public void depositCoin(int coinKindIndex, Coin coin){
-		int val = coin.getValue();
-		treasury.put(coinKindIndex, 1);
+	public void insertCoin_Treasury(int coinKindIndex, Coin coin){
+		if (treasury.get(coinKindIndex) != null)
+			treasury.get(coinKindIndex).add(coin);
 	}
 
 
-	public void depositPop(Pop pop) {
-		
-		
+	public void depositPops(int popIndex, Pop... pops) {
+		for (SelectionButton selButton: buttonGrid.keySet()){
+			if (selButton.getIndex() == popIndex){
+				for(Pop pop: pops){
+					buttonGrid.get(selButton).add(pop);
+				}
+				return;
+			}
+		}
 	}
 	
 	

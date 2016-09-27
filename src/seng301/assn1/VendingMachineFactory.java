@@ -551,12 +551,18 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 
     @Override
     public void insertCoin(int vmIndex, Coin coin) {
-	// TODO Replace this with a real implementation
+    	VendingMachine vm = findVM(vmIndex);
+    	if (vm != null){
+    		vm.insertCoin_Purchase(coin);
+    	}
     }
 
     @Override
     public void pressButton(int vmIndex, int value) {
-	// TODO Replace this with a real implementation
+    	VendingMachine vm = findVM(vmIndex);
+    	if (vm != null){
+    		
+    	}
     }
 
     @Override
@@ -572,15 +578,12 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     }
     
     
-    
-    // WTF DOES IT MEAN BY COINKINDINDEX
-
     @Override
     public void loadCoins(int vmIndex, int coinKindIndex, Coin... coins) {
     	VendingMachine vm = findVM(vmIndex);
     	if (vm != null){
     		for (Coin coin: coins){
-    			vm.depositCoin(coinKindIndex, coin);
+    			vm.insertCoin_Treasury(coinKindIndex, coin);
     		}
     	}
     } 
@@ -589,9 +592,7 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     public void loadPops(int vmIndex, int popKindIndex, Pop... pops) {
     	VendingMachine vm = findVM(vmIndex);
     	if (vm != null){
-    		for (Pop pop: pops){
-    			vm.depositPop(pop);
-    		}
+    		vm.depositPops(popKindIndex, pops);
     	}
     }
 
