@@ -31,5 +31,9 @@ public class SelectionButton {
 	public Integer getPrice() {
 		return price;
 	}
+	
+	public String getName() {
+		return storedPopName;
+	}
 
 }

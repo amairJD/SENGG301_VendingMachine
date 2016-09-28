@@ -526,13 +526,44 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 	// Vending Machine. The three calls below are an example and can be
 	// replaced or modified as you see fit, but this method must create one
 	// or more instances of {@link ScriptProcessor}.
+    	
+    	VendingMachineFactory vmFact = new VendingMachineFactory();
+    	
+    	List<Integer> coinKindList = new ArrayList<Integer>();
+    	coinKindList.add(5);
+    	coinKindList.add(10);
+    	coinKindList.add(25);
+    	coinKindList.add(100);
 
+    	
+    	vmFact.constructNewVendingMachine(coinKindList, 3);
+    	
+    	List<String> popNames = new ArrayList<String>();
+    	popNames.add("Coke");
+    	popNames.add("water");
+    	popNames.add("stuff");
+    	List<Integer> popPrices = new ArrayList<Integer>();
+    	popPrices.add(250);
+    	popPrices.add(250);
+    	popPrices.add(205);
+    	
+    	
+    	vmFact.configureVendingMachine(0, popNames, popPrices);
+    	
+		vmFact.loadCoins(0, 0, new Coin(5));
+		vmFact.loadCoins(0, 1, new Coin(10));
+		vmFact.loadCoins(0, 2, new Coin(25), new Coin(25));
+		
+		vmFact.loadPops(0, 0, new Pop("Coke"));
+		
+    	
+    	
     	
 	// Note that the scripts should be processed INDEPENDENTLY, which means
 	// that a new factory is needed to process each script.
 	new ScriptProcessor("good-script", new VendingMachineFactory(), true);
-	new ScriptProcessor("bad-script1", new VendingMachineFactory(), true);
-	new ScriptProcessor("bad-script2", new VendingMachineFactory(), true);
+	//new ScriptProcessor("bad-script1", new VendingMachineFactory(), true);
+	//new ScriptProcessor("bad-script2", new VendingMachineFactory(), true);
     }
 
     /**
