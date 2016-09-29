@@ -493,19 +493,9 @@ import org.lsmr.vending.frontend1.parser.ParseException;
  * </pre>
  */
 
-
-
-
-// A SMALLE COMMENT TO TEST IF THE GITHUB IS WORKING 
-// WHY AINT THIS WORKING MAN
-// PUSH TEST FROM HOME
-
-
 public class VendingMachineFactory implements IVendingMachineFactory {
 	
 	// The ArrayList keeps track of each Vending Machine created, numbered sequentially from 0
-	// NOTE: If you need to get rid of a Vending Machine, do not use vmList.remove(vmIndex). 
-	// 		Use this.destroyVM(vmIndex) instead! (Need to set to null so order of indexes is maintained).
 	private ArrayList<VendingMachine> vmList;
 	
 	private int indexCounter;
@@ -526,37 +516,6 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 	// Vending Machine. The three calls below are an example and can be
 	// replaced or modified as you see fit, but this method must create one
 	// or more instances of {@link ScriptProcessor}.
-    	
-    	VendingMachineFactory vmFact = new VendingMachineFactory();
-    	
-    	List<Integer> coinKindList = new ArrayList<Integer>();
-    	coinKindList.add(5);
-    	coinKindList.add(10);
-    	coinKindList.add(25);
-    	coinKindList.add(100);
-
-    	
-    	vmFact.constructNewVendingMachine(coinKindList, 3);
-    	
-    	List<String> popNames = new ArrayList<String>();
-    	popNames.add("Coke");
-    	popNames.add("water");
-    	popNames.add("stuff");
-    	List<Integer> popPrices = new ArrayList<Integer>();
-    	popPrices.add(250);
-    	popPrices.add(250);
-    	popPrices.add(205);
-    	
-    	
-    	vmFact.configureVendingMachine(0, popNames, popPrices);
-    	
-		vmFact.loadCoins(0, 0, new Coin(5));
-		vmFact.loadCoins(0, 1, new Coin(10));
-		vmFact.loadCoins(0, 2, new Coin(25), new Coin(25));
-		
-		vmFact.loadPops(0, 0, new Pop("Coke"));
-		
-    	
     	
     	
 	// Note that the scripts should be processed INDEPENDENTLY, which means
@@ -631,8 +590,6 @@ public class VendingMachineFactory implements IVendingMachineFactory {
 
     @Override
     public List<List<?>> unloadVendingMachine(int vmIndex) {
-	// TODO Replace this with a real implementation
-	//return Arrays.<List<?>> asList(new ArrayList<Object>(new Integer(0)), new ArrayList<Object>(new Integer(0)), new ArrayList<Object>());
     	VendingMachine vm = findVM(vmIndex);
     	if (vm != null){
     		return vm.unload();
@@ -640,13 +597,6 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     		return null;    	
     }
     
-    // When a Vending Machine needs to be destroyed, use this instead of ArrayList<E>.remove()!
-    public void destroyVM(int vmIndex){
-    	VendingMachine vm = findVM(vmIndex);
-    	vm = null;
-    }
-    
-    // index's may get rearranged if some vending machines are removed, so use this to find the right machine
     public VendingMachine findVM(int vmIndex) {
     	for (VendingMachine vm: vmList){
     		if (vm.getIndex() == vmIndex){
@@ -655,5 +605,15 @@ public class VendingMachineFactory implements IVendingMachineFactory {
     	}
 		return null;  
     }
+    
+    /** EXPERIMENTAL CODE FOR FUTURE USE, DO NOT USE
+ 
+    // When a Vending Machine needs to be destroyed, use this instead of ArrayList<E>.remove()!
+    public void destroyVM(int vmIndex){
+    	VendingMachine vm = findVM(vmIndex);
+    	vm = null;
+    }
+    
+    **/
     
 }

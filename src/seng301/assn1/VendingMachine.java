@@ -15,30 +15,33 @@ import org.lsmr.vending.frontend1.Pop;
 public class VendingMachine {	
 	
 	private Map<SelectionButton, ArrayList<Pop>> buttonGrid;
-	// Each selection button stores an index and price, and corresponds with a number/type of pops
+	// Each 'Selection Button' stores an index, price, and corresponds with a type of pop
 	
 	private Map<Integer, ArrayList<Coin>> treasury;
-	// Total cash is kept in the 'treasury'. Represented as (K, V), where each (K)ey is the coin kind, 
-	// and it's (V)alue is a List containing the coins.
+	// Total cash is kept in the 'treasury'. Represented as (K, V), where each Key is the coin kind, 
+	// and it's Value is a List containing the coins.
 	
 	private List<Integer> coinKinds;
+	// A List of coin types supported by the machine
 	
 	private ArrayList<Coin> creditChute;
 	// Inputed coins are stored here and stay here unless a purchase is made
+	
+	private ArrayList<Coin> paymentContainer;
+	// Money used for payment is stored here
 
 	private int index;
 	
 	private ArrayList<Deliverable> deliveryChute;
+	// Purchases and change are transferred here
 
-	// Pass in ID from Factory to this constructor
+	
+	// Use this constructor
 	VendingMachine(List<Integer> in_coinKinds, int selectionButtonCount, int indexCounter){
 		
 		buttonGrid = new LinkedHashMap<SelectionButton, ArrayList<Pop> >();
 		for(int i = 0; i < selectionButtonCount; i++){
 			buttonGrid.put(new SelectionButton(i, 0), new ArrayList<Pop>());
-		}
-		for (SelectionButton sb: buttonGrid.keySet()){
-			System.out.println("ButtGrid Index" + sb.getIndex()); // TODO delete this
 		}
 		
 		treasury = new LinkedHashMap<Integer, ArrayList<Coin> >();
@@ -46,7 +49,6 @@ public class VendingMachine {
 			treasury.put(coinKind, new ArrayList<Coin>());
 			
 		}
-		System.out.println(treasury.keySet());
 		coinKinds = in_coinKinds;
 		
 		creditChute = new ArrayList<Coin>();
@@ -59,34 +61,23 @@ public class VendingMachine {
 	VendingMachine(){
 		
 	};
-
+	
 	public void configurePops(List<String> popNames, List<Integer> popCosts) {
-		
 		// Make sure all sections are empty before configuration
 		for (SelectionButton sb: buttonGrid.keySet()){
 			buttonGrid.get(sb).clear();
 		}
-		
+		// Configure Pops
 		if(popNames.size() <= buttonGrid.size() && popCosts.size() <= buttonGrid.size()){
 			Iterator<String> popNames_Iterator = popNames.iterator();
 			Iterator<Integer> popCosts_Iterator = popCosts.iterator();		
 			while (popNames_Iterator.hasNext() && popCosts_Iterator.hasNext()) {
-
 				for (SelectionButton selButton: buttonGrid.keySet()){
-					System.out.println("SSDSS");
-
 					selButton.setStoredPopName(popNames_Iterator.next());
 					selButton.setPrice(popCosts_Iterator.next());
 				}
 			}
 		}
-		
-		for (SelectionButton sb: buttonGrid.keySet()){
-			System.out.println("Configured, index at " + sb.getIndex() + ", pop " +
-					sb.getPrice() + "  " + sb.getName());  // TODO delete this
-		}
-		
-		
 	}
 
 	public void setIndex(int vmIndex) {
@@ -108,10 +99,14 @@ public class VendingMachine {
 	public void loadCoin_Treasury(int coinKindIndex, Coin coin){
 		int coinType = coinKinds.get(coinKindIndex);
 		treasury.get(coinType).add(coin);
-		
-		System.out.println(treasury); // TODO delete this when handing in
 	}
 
+	// Moves the coins in the credit chute to the payment Container
+	@SuppressWarnings("unchecked")
+	public void credit_to_paymentContainer(){
+		paymentContainer = (ArrayList<Coin>) creditChute.clone();
+		creditChute.clear();
+	}
 
 	public void depositPops(int popIndex, Pop... pops) {
 		for (SelectionButton selButton: buttonGrid.keySet()){
@@ -119,14 +114,12 @@ public class VendingMachine {
 				for(Pop pop: pops){
 					buttonGrid.get(selButton).add(pop);
 				}
-				System.out.println("deposited pops: " + buttonGrid.get(selButton)); // TODO delete this
 				return;
 			}
 		}
 	}
 	
 	public void pressButton(int value) {
-
 		if (value < buttonGrid.size()){
 			for (SelectionButton selButton: buttonGrid.keySet()){
 				if (selButton.getIndex() == value){
@@ -136,8 +129,8 @@ public class VendingMachine {
 						return;
 					}else {
 						deliverPop(selButton);
-						creditChute.clear(); // Money has been used for buying pop
-						Integer outputMoney = inputMoney - selButton.getPrice(); // Calculate change
+						credit_to_paymentContainer(); // move payment $$ from credit to payment Container
+						Integer outputMoney = inputMoney - selButton.getPrice(); // Calculate change value
 						// Now change must be withdrawn in respect to the coins in the treasury
 						changeMaker(outputMoney);
 					}
@@ -147,6 +140,7 @@ public class VendingMachine {
 		}
 	}
 
+	// Counts the total money in the credit chute and returns it as an Integer
 	private Integer countMoney() {
 		int inputMoney = 0;
 		for (Coin coin: creditChute){
@@ -163,21 +157,17 @@ public class VendingMachine {
 		}
 		ArrayList<Pop> popStash = buttonGrid.get(selButton);
 		deliveryChute.add(popStash.get(0)); // Move a pop from the inventory to the chute
-		System.out.println("Del chute is update: " + deliveryChute); // TODO delete this line
 		buttonGrid.get(selButton).remove(0); // Make sure the pop is removed from the inventory
-		System.out.println("Pop invent is update: " + buttonGrid.get(selButton)); // TODO delete this line
-
 	}
 	
 	
-	// This method creates change out of the total value needing to be outputed and delivers the coins to the deliveryChute
-	// Will try to give the least number of coins for total value
+	// Creates change out of the total value needing to be outputed, and delivers the coins to the deliveryChute
+	// Will try to give the least number of coins possible for total value
 	private void changeMaker(Integer outputMoney) {
 		List<Integer> tmp_coinKinds = coinKinds;
 		int numberOfCoin;
 		
 		while (!tmp_coinKinds.isEmpty()) {
-			System.out.println("makin' change: " + tmp_coinKinds);   // TODO delete this
 			int maxType = Collections.max(tmp_coinKinds); 	//Get the largest coinKind, 
 			numberOfCoin = outputMoney/maxType;  			// and calculate how many of those can be delivered
 			while (numberOfCoin != 0) {
@@ -198,12 +188,14 @@ public class VendingMachine {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Deliverable> emptyDeliveryChute() {
-		ArrayList<Deliverable> toDeliver = deliveryChute;
+		ArrayList<Deliverable> toDeliver = (ArrayList<Deliverable>) deliveryChute.clone();
 		deliveryChute.clear();
 		return toDeliver;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<List<?>> unload() {
 		
 		List<Coin> treasuryCoins = new ArrayList<Coin>();
@@ -215,8 +207,8 @@ public class VendingMachine {
 			treasury.get(coinKind).clear();
 		}
 		
-		creditCoins = creditChute;
-		creditChute.clear();
+		creditCoins = (List<Coin>) paymentContainer.clone();
+		paymentContainer.clear();
 		
 		for (SelectionButton popButton: buttonGrid.keySet()){
 			popInventory.addAll(buttonGrid.get(popButton));
@@ -227,11 +219,8 @@ public class VendingMachine {
 		allLists.add(treasuryCoins);
 		allLists.add(creditCoins);
 		allLists.add(popInventory);
-		
+
 		return allLists;
 	}
-	
-	
-	
 	
 }
